@@ -89,7 +89,7 @@
       opt.textContent = opt.getAttribute('data-' + currentLang);
     });
 
-    // Update hidden form fields for FormSubmit
+    // Update hidden form fields for Web3Forms
     var subjectField = document.getElementById('formSubject');
     if (subjectField) {
       subjectField.value = currentLang === 'en'
@@ -204,42 +204,63 @@
   var formSuccess = document.getElementById('formSuccess');
 
   if (form) {
-    // Set _next to current page with success flag so user returns after FormSubmit redirect
-    var nextField = document.getElementById('formNext');
-    if (nextField) {
-      var baseUrl = window.location.href.split('?')[0].split('#')[0];
-      nextField.value = baseUrl + '?submitted=true#contact';
-    }
-
-    // Check if returning from FormSubmit redirect (file upload submission)
-    if (window.location.search.indexOf('submitted=true') !== -1) {
-      form.style.display = 'none';
-      if (formSuccess) formSuccess.classList.add('show');
-      // Clean URL without reloading
-      if (window.history.replaceState) {
-        window.history.replaceState({}, '', window.location.pathname + window.location.hash);
-      }
-    }
-
     form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
       var firstName = form.querySelector('#firstName');
       var email = form.querySelector('#email');
 
       if (!firstName.value.trim() || !email.value.trim()) {
-        e.preventDefault();
         if (!firstName.value.trim()) firstName.style.borderColor = 'var(--color-error)';
         if (!email.value.trim()) email.style.borderColor = 'var(--color-error)';
         return;
       }
 
-      // Always use native form POST (most reliable with FormSubmit)
-      // The _next hidden field redirects user back to the site after submission
+      var formData = new FormData(form);
       var submitBtn = form.querySelector('button[type="submit"]');
+      var originalBtnHTML = submitBtn.innerHTML;
+
       submitBtn.disabled = true;
       submitBtn.innerHTML = currentLang === 'en'
         ? '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Sending...</span>'
         : '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Envoi...</span>';
-      // Let browser handle the native form POST (do not call e.preventDefault)
+
+      // Submit via Web3Forms API (returns reliable JSON response)
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      }).then(function(response) {
+        return response.json();
+      }).then(function(data) {
+        if (data.success) {
+          form.style.display = 'none';
+          if (formSuccess) formSuccess.classList.add('show');
+        } else {
+          throw new Error(data.message || 'Submission failed');
+        }
+      }).catch(function() {
+        // Fallback: open mailto
+        var fd = new FormData(form);
+        var subject = encodeURIComponent(
+          currentLang === 'en'
+            ? 'New Rate Analysis Request'
+            : 'Nouvelle demande d\'analyse de taux'
+        );
+        var body = encodeURIComponent(
+          (currentLang === 'en' ? 'Name: ' : 'Nom: ') + fd.get('First Name') + ' ' + fd.get('Last Name') + '\n' +
+          'Email: ' + fd.get('Email') + '\n' +
+          (currentLang === 'en' ? 'Phone: ' : 'Tél: ') + (fd.get('Phone') || 'N/A') + '\n' +
+          (currentLang === 'en' ? 'Business: ' : 'Entreprise: ') + (fd.get('Business Name') || 'N/A') + '\n' +
+          (currentLang === 'en' ? 'Industry: ' : 'Industrie: ') + (fd.get('Business Type') || 'N/A') + '\n\n' +
+          (currentLang === 'en' ? 'Message: ' : 'Message: ') + (fd.get('Message') || 'N/A')
+        );
+        window.open('mailto:info@unified-solutions.ca?subject=' + subject + '&body=' + body, '_blank');
+        form.style.display = 'none';
+        if (formSuccess) formSuccess.classList.add('show');
+      }).finally(function() {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHTML;
+      });
     });
 
     // Clear error styling on input focus

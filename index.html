@@ -529,13 +529,12 @@
         </div>
 
         <div data-animate="fade-up">
-          <form class="lead-form" id="leadForm" action="https://formsubmit.co/info@unified-solutions.ca" method="POST" enctype="multipart/form-data">
-            <!-- FormSubmit config -->
-            <input type="hidden" name="_subject" id="formSubject" value="New Rate Analysis Request">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_template" value="table">
-            <input type="hidden" name="_next" id="formNext" value="">
-            <input type="text" name="_honey" style="display:none">
+          <form class="lead-form" id="leadForm" action="https://api.web3forms.com/submit" method="POST" enctype="multipart/form-data">
+            <!-- Web3Forms config -->
+            <input type="hidden" name="access_key" value="8b12e3ea-8384-41c1-ab4b-4734d2d9049a">
+            <input type="hidden" name="subject" id="formSubject" value="New Rate Analysis Request">
+            <input type="hidden" name="from_name" value="Unified Solutions Website">
+            <input type="checkbox" name="botcheck" class="hidden" style="display:none">
 
             <h3 class="form-title" data-en="Request a Free Analysis" data-fr="Demandez une analyse gratuite">Request a Free Analysis</h3>
             <p class="form-subtitle" data-en="Fill in your details and upload your current statement for a personalized rate comparison." data-fr="Remplissez vos informations et téléchargez votre relevé actuel pour une comparaison de taux personnalisée.">Fill in your details and upload your current statement for a personalized rate comparison.</p>
