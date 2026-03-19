@@ -232,70 +232,14 @@
         return;
       }
 
-      // Check if a file is attached
-      var hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
-
-      if (hasFile) {
-        // Native form submission for file attachments (FormSubmit requires this)
-        // The _next field redirects user back after submission
-        var submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = currentLang === 'en'
-          ? '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Sending...</span>'
-          : '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Envoi...</span>';
-        // Let browser handle the native form POST (do not call e.preventDefault)
-        return;
-      }
-
-      // No file: use AJAX submission
-      e.preventDefault();
-
-      var formData = new FormData(form);
+      // Always use native form POST (most reliable with FormSubmit)
+      // The _next hidden field redirects user back to the site after submission
       var submitBtn = form.querySelector('button[type="submit"]');
-      var originalBtnHTML = submitBtn.innerHTML;
-
-      // Show loading state
       submitBtn.disabled = true;
       submitBtn.innerHTML = currentLang === 'en'
         ? '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Sending...</span>'
         : '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Envoi...</span>';
-
-      fetch(form.action, {
-        method: 'POST',
-        body: formData
-      }).then(function(response) {
-        // FormSubmit returns 200 on success
-        if (response.ok || response.status === 200) {
-          form.style.display = 'none';
-          if (formSuccess) formSuccess.classList.add('show');
-        } else {
-          throw new Error('Form submission failed');
-        }
-      }).catch(function() {
-        // Fallback: open mailto
-        var data = new FormData(form);
-        var subject = encodeURIComponent(
-          currentLang === 'en'
-            ? 'New Rate Analysis Request'
-            : 'Nouvelle demande d\'analyse de taux'
-        );
-        var body = encodeURIComponent(
-          (currentLang === 'en' ? 'Name: ' : 'Nom: ') + data.get('First Name') + ' ' + data.get('Last Name') + '\n' +
-          'Email: ' + data.get('Email') + '\n' +
-          (currentLang === 'en' ? 'Phone: ' : 'Tél: ') + (data.get('Phone') || 'N/A') + '\n' +
-          (currentLang === 'en' ? 'Business: ' : 'Entreprise: ') + (data.get('Business Name') || 'N/A') + '\n' +
-          (currentLang === 'en' ? 'Industry: ' : 'Industrie: ') + (data.get('Business Type') || 'N/A') + '\n\n' +
-          (currentLang === 'en' ? 'Message: ' : 'Message: ') + (data.get('Message') || 'N/A')
-        );
-        window.open('mailto:info@unified-solutions.ca?subject=' + subject + '&body=' + body, '_blank');
-
-        // Still show success
-        form.style.display = 'none';
-        if (formSuccess) formSuccess.classList.add('show');
-      }).finally(function() {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnHTML;
-      });
+      // Let browser handle the native form POST (do not call e.preventDefault)
     });
 
     // Clear error styling on input focus
