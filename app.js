@@ -204,25 +204,52 @@
   var formSuccess = document.getElementById('formSuccess');
 
   if (form) {
-    // Set _next to current page URL so user returns after FormSubmit redirect
+    // Set _next to current page with success flag so user returns after FormSubmit redirect
     var nextField = document.getElementById('formNext');
     if (nextField) {
-      nextField.value = window.location.href;
+      var baseUrl = window.location.href.split('?')[0].split('#')[0];
+      nextField.value = baseUrl + '?submitted=true#contact';
+    }
+
+    // Check if returning from FormSubmit redirect (file upload submission)
+    if (window.location.search.indexOf('submitted=true') !== -1) {
+      form.style.display = 'none';
+      if (formSuccess) formSuccess.classList.add('show');
+      // Clean URL without reloading
+      if (window.history.replaceState) {
+        window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+      }
     }
 
     form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
       var firstName = form.querySelector('#firstName');
       var email = form.querySelector('#email');
 
       if (!firstName.value.trim() || !email.value.trim()) {
+        e.preventDefault();
         if (!firstName.value.trim()) firstName.style.borderColor = 'var(--color-error)';
         if (!email.value.trim()) email.style.borderColor = 'var(--color-error)';
         return;
       }
 
-      // Submit via fetch to FormSubmit.co
+      // Check if a file is attached
+      var hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
+
+      if (hasFile) {
+        // Native form submission for file attachments (FormSubmit requires this)
+        // The _next field redirects user back after submission
+        var submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = currentLang === 'en'
+          ? '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Sending...</span>'
+          : '<span style="display:inline-flex;align-items:center;gap:8px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Envoi...</span>';
+        // Let browser handle the native form POST (do not call e.preventDefault)
+        return;
+      }
+
+      // No file: use AJAX submission
+      e.preventDefault();
+
       var formData = new FormData(form);
       var submitBtn = form.querySelector('button[type="submit"]');
       var originalBtnHTML = submitBtn.innerHTML;
