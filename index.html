@@ -529,7 +529,7 @@
         </div>
 
         <div data-animate="fade-up">
-          <form class="lead-form" id="leadForm" action="https://api.web3forms.com/submit" method="POST" enctype="multipart/form-data">
+          <form class="lead-form" id="leadForm" action="https://api.web3forms.com/submit" method="POST">
             <!-- Web3Forms config -->
             <input type="hidden" name="access_key" value="8b12e3ea-8384-41c1-ab4b-4734d2d9049a">
             <input type="hidden" name="subject" id="formSubject" value="New Rate Analysis Request">
@@ -537,7 +537,7 @@
             <input type="checkbox" name="botcheck" class="hidden" style="display:none">
 
             <h3 class="form-title" data-en="Request a Free Analysis" data-fr="Demandez une analyse gratuite">Request a Free Analysis</h3>
-            <p class="form-subtitle" data-en="Fill in your details and upload your current statement for a personalized rate comparison." data-fr="Remplissez vos informations et téléchargez votre relevé actuel pour une comparaison de taux personnalisée.">Fill in your details and upload your current statement for a personalized rate comparison.</p>
+            <p class="form-subtitle" data-en="Fill in your details and we will contact you to obtain a copy of your recent statement for analysis." data-fr="Remplissez vos informations et nous vous contacterons pour obtenir une copie de votre relevé récent aux fins d'analyse.">Fill in your details and we will contact you to obtain a copy of your recent statement for analysis.</p>
 
             <div class="form-grid">
               <div class="form-group">
@@ -573,22 +573,7 @@
                   <option value="Other" data-en="Other" data-fr="Autre">Other</option>
                 </select>
               </div>
-              <div class="form-group full-width">
-                <label data-en="Upload Statement (optional)" data-fr="Télécharger le relevé (optionnel)">Upload Statement (optional)</label>
-                <div class="file-upload-area" id="fileUploadArea">
-                  <div class="file-upload-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  </div>
-                  <p class="file-upload-text" data-en="<strong>Click to upload</strong> or drag and drop" data-fr="<strong>Cliquez pour télécharger</strong> ou glissez-déposez"><strong>Click to upload</strong> or drag and drop</p>
-                  <p class="file-upload-hint" data-en="PDF, JPG, or PNG. Max 10MB" data-fr="PDF, JPG ou PNG. Max 10 Mo">PDF, JPG, or PNG. Max 10MB</p>
-                  <input type="file" id="statementFile" name="attachment" accept=".pdf,.jpg,.jpeg,.png">
-                </div>
-                <div id="filePreview" class="file-preview" style="display:none;">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  <span id="fileName"></span>
-                  <span class="file-remove" id="fileRemove" data-en="Remove" data-fr="Retirer">Remove</span>
-                </div>
-              </div>
+
               <div class="form-group full-width">
                 <label for="message" data-en="Message (optional)" data-fr="Message (optionnel)">Message (optional)</label>
                 <textarea id="message" name="Message" rows="3" data-placeholder-en="Tell us about your business or any specific needs..." data-placeholder-fr="Parlez-nous de votre entreprise ou de vos besoins spécifiques..." placeholder="Tell us about your business or any specific needs..."></textarea>

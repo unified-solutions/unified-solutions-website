@@ -149,57 +149,7 @@
     });
   }
 
-  // ── File Upload ──
-  var fileUploadArea = document.getElementById('fileUploadArea');
-  var fileInput = document.getElementById('statementFile');
-  var filePreview = document.getElementById('filePreview');
-  var fileNameEl = document.getElementById('fileName');
-  var fileRemove = document.getElementById('fileRemove');
-
-  if (fileUploadArea && fileInput) {
-    fileUploadArea.addEventListener('click', function() { fileInput.click(); });
-
-    fileUploadArea.addEventListener('dragover', function(e) {
-      e.preventDefault();
-      fileUploadArea.classList.add('dragging');
-    });
-    fileUploadArea.addEventListener('dragleave', function() {
-      fileUploadArea.classList.remove('dragging');
-    });
-    fileUploadArea.addEventListener('drop', function(e) {
-      e.preventDefault();
-      fileUploadArea.classList.remove('dragging');
-      if (e.dataTransfer.files.length) {
-        fileInput.files = e.dataTransfer.files;
-        showFilePreview(e.dataTransfer.files[0]);
-      }
-    });
-
-    fileInput.addEventListener('change', function() {
-      if (fileInput.files.length) {
-        showFilePreview(fileInput.files[0]);
-      }
-    });
-
-    if (fileRemove) {
-      fileRemove.addEventListener('click', function(e) {
-        e.stopPropagation();
-        fileInput.value = '';
-        filePreview.style.display = 'none';
-        fileUploadArea.style.display = '';
-      });
-    }
-  }
-
-  function showFilePreview(file) {
-    if (!filePreview || !fileNameEl) return;
-    var size = (file.size / (1024 * 1024)).toFixed(1);
-    fileNameEl.textContent = file.name + ' (' + size + ' MB)';
-    filePreview.style.display = 'flex';
-    fileUploadArea.style.display = 'none';
-  }
-
-  // ── Form Submission via FormSubmit.co ──
+  // ── Form Submission via Web3Forms ──
   var form = document.getElementById('leadForm');
   var formSuccess = document.getElementById('formSuccess');
 
